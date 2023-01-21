@@ -72,12 +72,12 @@ public:
         life       = MAX_LIFE;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
-        range      = 45;
+        range      = 80;
         mana       = MAX_MANA/10*3;
         move       = MAX_MOVE/2+1;
         block      = 0;
         height = 25;
-        width = 16;
+        width = 18;
         hand = 0;
 
         headCol    = WHITE;
@@ -102,6 +102,7 @@ public:
         Linie(x-23,height-17,66,0,32);
     }
     void ShowAttack(){
+        damage = 0;
         Clear();
         ShowGhost();
         ShowAttackMouth();
@@ -110,7 +111,7 @@ public:
         int yoff = 0;
         int distTee = enemy->x+enemy->width;
 
-        for(int i = 0; i < distTee +4; i++){
+        for(int i = 0; i < range; i++){
             if(GetKeyState(VK_UP) & 0x8000)
                 yoff += 1;
             else if(GetKeyState(VK_DOWN) & 0x8000)
@@ -121,7 +122,8 @@ public:
             Sleep(50);
             Linie(x - 20 - i, height - 9 + yoff, 3, 0, 32);
             Linie(x - 20 - i, height - 10 + yoff, 3, 0, 32);
-            if(i > range){
+            if((i > distTee +4) && ((height-10+yoff) < enemy->height)){
+                damage = STD_DAMAGE;
                 break;
             }
         }
