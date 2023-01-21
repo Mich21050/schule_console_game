@@ -2,8 +2,10 @@
 // Created by Huawei on 11/01/2023.
 //
 #include "Bauer.h"
+#include "windows.h"
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
+#include "stdlib.h"
 
 class Ghost : public Bauer
 {
@@ -19,40 +21,47 @@ private:
                 Linie(xoff,yoff+i,1,0,bodyC);
         }
     }
-    void ShowGhost(int offset){
+    void ShowGhost(){
         setcolor(bodyCol);
-        Linie((x+offset) - 5, height, 9, 0, bodyC);
-        Linie((x+offset) - 9, height - 1, 3, 0, bodyC);
-        Linie((x+offset) - 11, height - 2, 1, 0, bodyC);
-        printTwo((x+offset)-13,height-3,-2);
-        printTwo((x+offset)-15,height-5,-6);
-        printTwo((x+offset)-13,height-11,-2);
-        Linie((x+offset)-11,height-13,1,0,bodyC);
-        Linie((x+offset)-9,height-14,3,0,bodyC);
-        Linie((x+offset)-5, height-15,11,0,bodyC);
-        Linie((x+offset)+7,height-14,3,0,bodyC);
-        Linie((x+offset)+11,height-13,1,0,bodyC);
-        Linie((x+offset)+13,height-12,1,0,bodyC);
-        printTwo((x+offset)+15,height-11,4);
-        Linie((x+offset)+13, height-7,1,0,bodyC);
-        printTwo((x+offset)+15,height-6,2);
-        Linie((x+offset)+13,height-4,1,0,bodyC);
-        Linie((x+offset)+11,height-3,1,0,bodyC);
-        Linie((x+offset)+9,height-2,1,0,bodyC);
-        Linie((x+offset)+5,height-1,3,0,bodyC);
+        Linie(x - 5, height, 9, 0, bodyC);
+        Linie(x - 9, height - 1, 3, 0, bodyC);
+        Linie(x - 11, height - 2, 1, 0, bodyC);
+        printTwo(x-13,height-3,-2);
+        printTwo(x-15,height-5,-6);
+        printTwo(x-13,height-11,-2);
+        Linie(x-11,height-13,1,0,bodyC);
+        Linie(x-9,height-14,3,0,bodyC);
+        Linie(x-5, height-15,11,0,bodyC);
+        Linie(x+7,height-14,3,0,bodyC);
+        Linie(x+11,height-13,1,0,bodyC);
+        Linie(x+13,height-12,1,0,bodyC);
+        printTwo(x+15,height-11,4);
+        Linie(x+13, height-7,1,0,bodyC);
+        printTwo(x+15,height-6,2);
+        Linie(x+13,height-4,1,0,bodyC);
+        Linie(x+11,height-3,1,0,bodyC);
+        Linie(x+9,height-2,1,0,bodyC);
+        Linie(x+5,height-1,3,0,bodyC);
         setcolor(headCol);
-        printTwo((x+offset)-5,height-4,-2);
-        printTwo((x+offset)-9,height-4,-2);
-        printTwo((x+offset)+9,height-5,-3);
-        Linie((x+offset)+5,height-5,3,0,bodyC);
-        Linie((x+offset)+3,height-6,1,0,bodyC);
-        Linie((x+offset)+7,height-8,1,0,bodyC);
+        printTwo(x-5,height-4,-2);
+        printTwo(x-9,height-4,-2);
+        printTwo(x+9,height-5,-3);
+        Linie(x+5,height-5,3,0,bodyC);
+        Linie(x+3,height-6,1,0,bodyC);
+        Linie(x+7,height-8,1,0,bodyC);
 
-        Linie((x+offset)-11,height-8,1,0,bodyC);
-        Linie((x+offset)-1,height-8,1,0,bodyC);
-
-        Linie((x+offset)-9,height-9,7,0,bodyC);
-
+    }
+    void showNormalMouth(){
+        //mouth
+        Linie(x-11,height-8,1,0,bodyC);
+        Linie(x-1,height-8,1,0,bodyC);
+        Linie(x-9,height-9,7,0,bodyC);
+    }
+    void ShowAttackMouth(){
+        Linie(x-8,height-8,3,0,bodyC);
+        Linie(x-8,height-11,3,0,bodyC);
+        printTwo(x-10,height-9,-2);
+        printTwo(x-4,height-9,-2);
     }
 public:
     Ghost()
@@ -63,10 +72,13 @@ public:
         life       = MAX_LIFE;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
-        range      = 14;
+        range      = 45;
         mana       = MAX_MANA/10*3;
         move       = MAX_MOVE/2+1;
         block      = 0;
+        height = 25;
+        width = 16;
+        hand = 0;
 
         headCol    = WHITE;
         bodyCol = WHITE;
@@ -75,17 +87,62 @@ public:
 
     /**/
     void ShowMan() {
-        ShowGhost(0);
+        ShowGhost();
+        //ShowAttackMouth();
+        showNormalMouth();
 
     }
-    void SetBodyC(char zeichen) {bodyC = zeichen;}
     void ShowWeapon(){
 
     }
     void ShowStart(){
-        Clear();
-        x= MIDDLE;
         ShowMan();
+        Text(x+10,height-17,"Bei Angriff kann der Feuerball mit den Pfeiltasten gesteuert werden");
+        Sleep(2000);
+        Linie(x-23,height-17,66,0,32);
+    }
+    void ShowAttack(){
+        Clear();
+        ShowGhost();
+        ShowAttackMouth();
+        setcolor(RED);
+        //10
+        int yoff = 0;
+        int distTee = enemy->x+enemy->width;
+
+        for(int i = 0; i < distTee +4; i++){
+            if(GetKeyState(VK_UP) & 0x8000)
+                yoff += 1;
+            else if(GetKeyState(VK_DOWN) & 0x8000)
+                yoff -= 1;
+            setcolor(RED);
+            Linie(x-20-i,height-9+yoff,3,0,219);
+            Linie(x-20-i,height-10+yoff,3,0,219);
+            Sleep(50);
+            Linie(x - 20 - i, height - 9 + yoff, 3, 0, 32);
+            Linie(x - 20 - i, height - 10 + yoff, 3, 0, 32);
+            if(i > range){
+                break;
+            }
+        }
+        Clear();
+        ShowGhost();
+        showNormalMouth();
+    }
+    void Clear()
+    {
+        char saveBody   = bodyC;
+        char saveWeapon = weaponC;
+        char saveArmor  = armorC;
+        bodyC   = ' ';
+        weaponC = ' ';
+        armorC  = ' ';
+        ShowGhost();
+        ShowAttackMouth();
+        showNormalMouth();
+        bodyC   = saveBody;
+        weaponC = saveWeapon;
+        armorC  = saveArmor;
     }
 };
 
