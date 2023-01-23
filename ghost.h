@@ -6,6 +6,7 @@
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
 #include "stdlib.h"
+#define animation false
 
 class Ghost : public Bauer
 {
@@ -78,7 +79,7 @@ private:
     void ClearText(int x, int y, int len){
         Text(x,y,string(len, ' ').c_str());
     }
-    void MoveUpDown(int wohin){
+    void MoveUpDown(int wohin, bool style){
         // move = speed = range of movement
         if(wohin > +move) wohin = +move;
         if(wohin < -move) wohin = -move;
@@ -91,8 +92,15 @@ private:
                                 + width + enemy->width ) break;
             Clear();
             x--;                // Move Fighter
-            if(i%5 == 0) {
-                height--;
+            if(style) {
+                if (i % 5 == 0) {
+                    height--;
+                }
+            } else{
+                if(height == 25)
+                    height=23;
+                else if(height == 23)
+                    height=25;
             }
             step = (step+1)%3;
             Show();
@@ -149,8 +157,17 @@ public:
         int oldMove = move;
         move=WIDTH;
         x = 80;
-        height +=10;
-        MoveUpDown(x-oldX);
+
+        if(animation) {
+            height += 10;
+            MoveUpDown(x - oldX, true);
+        } else{
+            //MoveUpDown(x-oldX, false);
+            Move((x-oldX)/2);
+            MoveUpDown((x-oldX)/2, false);
+        }
+
+
         move = oldMove;
         Text(x+3,height-17,"Bei Angriff Feuerball mit Pfeiltasten steuern");
         Sleep(2000);
@@ -162,7 +179,6 @@ public:
         ShowGhost();
         ShowAttackMouth();
         setcolor(RED);
-        //10
         int yoff = 0;
         int distTee = enemy->x+enemy->width;
 
