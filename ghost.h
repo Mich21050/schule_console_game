@@ -12,6 +12,7 @@ class Ghost : public Bauer
 protected:
     int  armor;		// reduces the damage Heros gets
     char block;		// is blocking active?
+    bool isInvisible;
 private:
     void printTwo(int xoff,int yoff, int count){
         for(int i = 0; i < std::abs(count);i++){
@@ -63,6 +64,9 @@ private:
         printTwo(x-10,height-9,-2);
         printTwo(x-4,height-9,-2);
     }
+    void ClearText(int x, int y, int len){
+        Text(x,y,string(len, ' ').c_str());
+    }
 public:
     Ghost()
     {
@@ -79,6 +83,9 @@ public:
         height = 25;
         width = 18;
         hand = 0;
+
+        // 1 = invisible 2 = big fireball
+        isInvisible = false;
 
         headCol    = WHITE;
         bodyCol = WHITE;
@@ -99,7 +106,7 @@ public:
         ShowMan();
         Text(x+10,height-17,"Bei Angriff kann der Feuerball mit den Pfeiltasten gesteuert werden");
         Sleep(2000);
-        Linie(x-23,height-17,66,0,32);
+        ClearText(x+10,height-17,67);
     }
     void ShowAttack(){
         damage = 0;
@@ -145,6 +152,38 @@ public:
         bodyC   = saveBody;
         weaponC = saveWeapon;
         armorC  = saveArmor;
+    }
+    void Magic(){
+        Text(x+5,height-17,"u ^ unsichtbar/kein Schaden [35 Mana]");
+        Text(x+5,height-18,"f ^ Feuerball/doppelter Schaden [20 Mana]");
+        char sel = getch();
+        if((sel == 'u'|| sel == 'U')){
+            isInvisible = true;
+            Clear();
+            bodyC = 176;
+            ShowMan();
+        }
+        else if(sel == 'f'||sel=='F'){
+
+        }
+        ClearText(x+5,height-17,37);
+        ClearText(x+5,height-18,41);
+    }
+    int BeAttacked(){
+        int damage = enemy->DoAttack();
+        if(!isInvisible) {
+            life -= damage;
+            ShowLife();
+            return damage;
+        }
+        else{
+            isInvisible = false;
+            Clear();
+            bodyC =219;
+            ShowMan();
+            return 0;
+        }
+
     }
 };
 
