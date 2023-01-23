@@ -64,49 +64,97 @@ private:
         printTwo(x-10,height-9,-2);
         printTwo(x-4,height-9,-2);
     }
+    void ShowSadMouth(){
+        Linie(x-11,height-10,1,0,bodyC);
+        Linie(x-1,height-10,1,0,bodyC);
+        Linie(x-9,height-9,7,0,bodyC);
+    }
+    void ClearSadMouth(){
+        int oldbodyC = bodyC;
+        bodyC = ' ';
+        ShowSadMouth();
+        bodyC = oldbodyC;
+    }
     void ClearText(int x, int y, int len){
         Text(x,y,string(len, ' ').c_str());
+    }
+    void MoveUpDown(int wohin){
+        // move = speed = range of movement
+        if(wohin > +move) wohin = +move;
+        if(wohin < -move) wohin = -move;
+
+        // positiv wohin => ZUR MITTE
+        for(int i=0; i<wohin; i++)
+        {
+            if( x<=-MIDDLE+width ) break;
+            if( x + enemy->x <= MIN_DISTANCE
+                                + width + enemy->width ) break;
+            Clear();
+            x--;                // Move Fighter
+            if(i%5 == 0) {
+                height--;
+            }
+            step = (step+1)%3;
+            Show();
+            Sleep(SLEEP_MOVE);
+        }
+        Clear();
+        step = 2;
+        Show();
     }
 public:
     Ghost()
     {
-        strcpy(autorName, "Wannninger");
+        strcpy(autorName, "Wanninger");
         strcpy(heroName, "Ghost");
 
-        life       = MAX_LIFE;
+        life       = 45;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
         range      = 80;
-        mana       = MAX_MANA/10*3;
+        mana       = 45;
         move       = MAX_MOVE/2+1;
         block      = 0;
         height = 25;
         width = 18;
         hand = 0;
+        leg = 0;
 
-        // 1 = invisible 2 = big fireball
         isInvisible = false;
 
         headCol    = WHITE;
         bodyCol = WHITE;
         bodyC = 219;
+        weaponC    = ' ';
+        armorC     = ' ';
+        handCol    = BLACK;
+        legCol     = BLACK;
+        weaponCol  = BLACK;
     }
 
     /**/
     void ShowMan() {
         ShowGhost();
-        //ShowAttackMouth();
         showNormalMouth();
 
     }
     void ShowWeapon(){
 
     }
+    void ShowWeapon(int dx, int dy, char zeichen)
+    {
+    }
     void ShowStart(){
-        ShowMan();
-        Text(x+10,height-17,"Bei Angriff kann der Feuerball mit den Pfeiltasten gesteuert werden");
+        int oldX = x;
+        int oldMove = move;
+        move=WIDTH;
+        x = 80;
+        height +=10;
+        MoveUpDown(x-oldX);
+        move = oldMove;
+        Text(x+3,height-17,"Bei Angriff Feuerball mit Pfeiltasten steuern");
         Sleep(2000);
-        ClearText(x+10,height-17,67);
+        ClearText(x+3,height-17,45);
     }
     void ShowAttack(){
         damage = 0;
@@ -154,7 +202,7 @@ public:
         armorC  = saveArmor;
     }
     void Magic(){
-        Text(x+5,height-17,"u ^ unsichtbar/kein Schaden [35 Mana]");
+        Text(x+5,height-17,"u ^ unsichtbar/kein Schaden [25 Mana]");
         Text(x+5,height-18,"f ^ Feuerball/doppelter Schaden [20 Mana]");
         char sel = getch();
         if((sel == 'u'|| sel == 'U')){
@@ -162,6 +210,8 @@ public:
             Clear();
             bodyC = 176;
             ShowMan();
+            mana -= 25;
+            ShowLife();
         }
         else if(sel == 'f'||sel=='F'){
 
@@ -176,13 +226,32 @@ public:
             ShowLife();
             return damage;
         }
-        else{
+        else if(damage != 0){
             isInvisible = false;
             Clear();
             bodyC =219;
             ShowMan();
             return 0;
         }
+        else
+            return 0;
+
+    }
+    void ShowDeath(){
+        if(life>0) return;
+        Clear();
+        bodyC = 179;
+        int oldH = height;
+        for(int i = 0; i < oldH;i++){
+            height -= i;
+            ShowGhost();
+            ShowSadMouth();
+            Sleep(200);
+            Clear();
+            ClearSadMouth();
+        }
+    }
+    void ShowVictory(){
 
     }
 };
