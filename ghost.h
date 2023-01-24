@@ -6,7 +6,7 @@
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
 #include "stdlib.h"
-#define animation false
+#define animation 2
 
 class Ghost : public Bauer
 {
@@ -79,7 +79,7 @@ private:
     void ClearText(int x, int y, int len){
         Text(x,y,string(len, ' ').c_str());
     }
-    void MoveUpDown(int wohin, bool style){
+    void MoveUpDown(int wohin, int style){
         // move = speed = range of movement
         if(wohin > +move) wohin = +move;
         if(wohin < -move) wohin = -move;
@@ -92,15 +92,20 @@ private:
                                 + width + enemy->width ) break;
             Clear();
             x--;                // Move Fighter
-            if(style) {
+            if(style == 0) {
                 if (i % 5 == 0) {
                     height--;
                 }
-            } else{
+            } else if(style == 1){
                 if(height == 25)
                     height=23;
                 else if(height == 23)
                     height=25;
+            } else if(style == 2){
+                if(height == 23)
+                    height=25;
+                else if(height == 25)
+                    height=23;
             }
             step = (step+1)%3;
             Show();
@@ -110,13 +115,42 @@ private:
         step = 2;
         Show();
     }
+    void Attack(int damageIn){
+        damage = 0;
+        Clear();
+        ShowGhost();
+        ShowAttackMouth();
+        setcolor(RED);
+        int distTee = enemy->x+enemy->width;
+
+        int yoff = 0;
+        for(int i = 0; i < range; i++){
+            if(GetKeyState(VK_UP) & 0x8000)
+                yoff += 1;
+            else if(GetKeyState(VK_DOWN) & 0x8000)
+                yoff -= 1;
+            setcolor(RED);
+            Linie(x-20-i,height-9+yoff,3,0,219);
+            Linie(x-20-i,height-10+yoff,3,0,219);
+            Sleep(50);
+            Linie(x - 20 - i, height - 9 + yoff, 3, 0, 32);
+            Linie(x - 20 - i, height - 10 + yoff, 3, 0, 32);
+            if((i > enemy->x+(x-width)) && ((height-10+yoff) < enemy->height)){
+                damage = damageIn;
+                break;
+            }
+        }
+        Clear();
+        ShowGhost();
+        showNormalMouth();
+    }
 public:
     Ghost()
     {
         strcpy(autorName, "Wanninger");
         strcpy(heroName, "Ghost");
 
-        life       = 45;
+        life       = 40;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
         range      = 80;
@@ -158,13 +192,16 @@ public:
         move=WIDTH;
         x = 80;
 
-        if(animation) {
+        if(animation == 0) {
             height += 10;
-            MoveUpDown(x - oldX, true);
-        } else{
-            //MoveUpDown(x-oldX, false);
-            Move((x-oldX)/2);
-            MoveUpDown((x-oldX)/2, false);
+            MoveUpDown(x - oldX, 0);
+        } else if(animation == 1){
+            MoveUpDown(x-oldX, 1);
+        } else if(animation == 2){
+            height = 23;
+            int goal = x -oldX;
+            Move(goal/2);
+            MoveUpDown(goal/2, 2);
         }
 
 
@@ -174,33 +211,7 @@ public:
         ClearText(x+3,height-17,45);
     }
     void ShowAttack(){
-        damage = 0;
-        Clear();
-        ShowGhost();
-        ShowAttackMouth();
-        setcolor(RED);
-        int yoff = 0;
-        int distTee = enemy->x+enemy->width;
-
-        for(int i = 0; i < range; i++){
-            if(GetKeyState(VK_UP) & 0x8000)
-                yoff += 1;
-            else if(GetKeyState(VK_DOWN) & 0x8000)
-                yoff -= 1;
-            setcolor(RED);
-            Linie(x-20-i,height-9+yoff,3,0,219);
-            Linie(x-20-i,height-10+yoff,3,0,219);
-            Sleep(50);
-            Linie(x - 20 - i, height - 9 + yoff, 3, 0, 32);
-            Linie(x - 20 - i, height - 10 + yoff, 3, 0, 32);
-            if((i > distTee +4) && ((height-10+yoff) < enemy->height)){
-                damage = STD_DAMAGE;
-                break;
-            }
-        }
-        Clear();
-        ShowGhost();
-        showNormalMouth();
+        Attack(STD_DAMAGE);
     }
     void Clear()
     {
@@ -230,7 +241,13 @@ public:
             ShowLife();
         }
         else if(sel == 'f'||sel=='F'){
-
+            mana -= 20;
+            ShowLife();
+            enemy->ShowBlock();
+            Attack(STD_DAMAGE*2);
+            enemy->BeAttacked();
+            enemy->ClearBlock();
+            enemy->Show();
         }
         ClearText(x+5,height-17,37);
         ClearText(x+5,height-18,41);
@@ -268,6 +285,9 @@ public:
         }
     }
     void ShowVictory(){
+        for(int i = 0; i < 10;i++){
+
+        }
 
     }
 };
