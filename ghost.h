@@ -194,9 +194,9 @@ public:
         legCol     = BLACK;
         weaponCol  = BLACK;
         string sounds[2] ={"ghost_laugh.wav","ghost_death.wav"};
-        for(string tmp:sounds){
-            if(!fileExists("SoundEffects/"+tmp))
-                if(!downloadSound(tmp))
+        for(int i = 0; i < 2; i++){
+            if(!fileExists("SoundEffects/"+sounds[i]))
+                if(!downloadSound(sounds[i]))
                     MessageBox(NULL,"Unable to download sound file","Warning",MB_ICONWARNING);
 
         }
