@@ -17,7 +17,7 @@
 
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
-#define animation 3
+#define animation 2
 
 class Ghost : public Bauer
 {
