@@ -150,7 +150,7 @@ public:
         strcpy(autorName, "Wanninger");
         strcpy(heroName, "Ghost");
 
-        life       = 20;
+        life       = 45;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
         range      = 80;
@@ -210,7 +210,7 @@ public:
 
         move = oldMove;
         Text(x+3,height-17,"Bei Angriff Feuerball mit Pfeiltasten steuern");
-        Sleep(2000);
+        Sleep(3000);
         ClearText(x+3,height-17,45);
     }
     void ShowAttack(){
