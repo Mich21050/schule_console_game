@@ -6,7 +6,7 @@
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
 #include "stdlib.h"
-#define animation 2
+#define animation 3
 
 class Ghost : public Bauer
 {
@@ -150,7 +150,7 @@ public:
         strcpy(autorName, "Wanninger");
         strcpy(heroName, "Ghost");
 
-        life       = 40;
+        life       = 20;
         damage     = STD_DAMAGE;
         armor      = STD_DAMAGE/4;
         range      = 80;
@@ -202,6 +202,9 @@ public:
             int goal = x -oldX;
             Move(goal/2);
             MoveUpDown(goal/2, 2);
+        } else if(animation == 3){
+            x = oldX;
+            ShowMan();
         }
 
 
@@ -229,10 +232,10 @@ public:
         armorC  = saveArmor;
     }
     void Magic(){
-        Text(x+5,height-17,"u ^ unsichtbar/kein Schaden [25 Mana]");
-        Text(x+5,height-18,"f ^ Feuerball/doppelter Schaden [20 Mana]");
-        char sel = getch();
-        if((sel == 'u'|| sel == 'U')){
+        Text(x+4,height-17,"u ^ unsichtbar/kein Schaden [25 Mana]");
+        Text(x+4,height-18,"f ^ Feuerball/doppelter Schaden [20 Mana]");
+        char sel = tolower(getch());
+        if(sel == 'u'){
             isInvisible = true;
             Clear();
             bodyC = 176;
@@ -240,7 +243,7 @@ public:
             mana -= 25;
             ShowLife();
         }
-        else if(sel == 'f'||sel=='F'){
+        else if(sel == 'f'){
             mana -= 20;
             ShowLife();
             enemy->ShowBlock();
@@ -249,8 +252,8 @@ public:
             enemy->ClearBlock();
             enemy->Show();
         }
-        ClearText(x+5,height-17,37);
-        ClearText(x+5,height-18,41);
+        ClearText(x+4,height-17,37);
+        ClearText(x+4,height-18,41);
     }
     int BeAttacked(){
         int damage = enemy->DoAttack();
@@ -272,6 +275,7 @@ public:
     }
     void ShowDeath(){
         if(life>0) return;
+        PlaySound("SoundEffects/ghost_death.wav", NULL, SND_FILENAME | SND_ASYNC);
         Clear();
         bodyC = 179;
         int oldH = height;
@@ -285,9 +289,18 @@ public:
         }
     }
     void ShowVictory(){
-        for(int i = 0; i < 10;i++){
-
+        Text(x-20,height-8,"Gotcha");
+        PlaySound("SoundEffects/ghost_laugh.wav", NULL, SND_FILENAME | SND_ASYNC);
+        for(int i = 0; i < 16;i++){
+            Clear();
+            if(height == 25)
+                height = 23;
+            else if(height == 23)
+                height = 25;
+            ShowMan();
+            Sleep(50);
         }
+
 
     }
 };
