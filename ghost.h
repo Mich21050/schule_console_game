@@ -3,6 +3,9 @@
 //
 #include "Bauer.h"
 #include "windows.h"
+#include "sys/stat.h"
+#pragma comment(lib, "urlmon.lib")
+
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
 #include "stdlib.h"
@@ -144,6 +147,15 @@ private:
         ShowGhost();
         showNormalMouth();
     }
+    void downloadSound(string name){
+        string dwnld_URL = "https://github.com/Mich21050/schule_console_game/raw/master/soundSource/"+name;
+        string path = "SoundEffects/"+name;
+        URLDownloadToFile(NULL, dwnld_URL.c_str(), path.c_str(), 0, NULL);
+    }
+    bool fileExists(string name){
+        struct stat buffer;
+        return (stat (name.c_str(), &buffer) == 0);
+    }
 public:
     Ghost()
     {
@@ -172,6 +184,12 @@ public:
         handCol    = BLACK;
         legCol     = BLACK;
         weaponCol  = BLACK;
+        string sounds[2] ={"ghost_laugh.wav","ghost_death.wav"};
+        for(string tmp:sounds){
+            if(!fileExists("SoundEffects/"+tmp))
+                downloadSound(tmp);
+
+        }
     }
 
     /**/
