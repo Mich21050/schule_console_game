@@ -147,10 +147,11 @@ private:
         ShowGhost();
         showNormalMouth();
     }
-    void downloadSound(string name){
+    bool downloadSound(string name){
         string dwnld_URL = "https://github.com/Mich21050/schule_console_game/raw/master/soundSource/"+name;
         string path = "SoundEffects/"+name;
-        URLDownloadToFile(NULL, dwnld_URL.c_str(), path.c_str(), 0, NULL);
+        HRESULT res = URLDownloadToFile(NULL, dwnld_URL.c_str(), path.c_str(), 0, NULL);
+        return (res == S_OK);
     }
     bool fileExists(string name){
         struct stat buffer;
@@ -187,7 +188,8 @@ public:
         string sounds[2] ={"ghost_laugh.wav","ghost_death.wav"};
         for(string tmp:sounds){
             if(!fileExists("SoundEffects/"+tmp))
-                downloadSound(tmp);
+                if(!downloadSound(tmp))
+                    MessageBox(NULL,"Unable to download sound file","Warning",MB_ICONWARNING);
 
         }
     }
