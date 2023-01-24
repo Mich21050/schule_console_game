@@ -192,6 +192,7 @@ public:
         move=WIDTH;
         x = 80;
 
+
         if(animation == 0) {
             height += 10;
             MoveUpDown(x - oldX, 0);
