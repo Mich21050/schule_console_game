@@ -5,10 +5,10 @@
 #include "windows.h"
 #include "sys/stat.h"
 #pragma comment(lib, "urlmon.lib")
+#include "stdlib.h"
 
 #ifndef GAME_GHOST_H
 #define GAME_GHOST_H
-#include "stdlib.h"
 #define animation 3
 
 class Ghost : public Bauer
