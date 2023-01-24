@@ -1,6 +1,14 @@
 //
 // Created by Huawei on 11/01/2023.
 //
+
+//********************WICHTIG**********************************
+//Bei Dev-CPP: Project--> Project Options --> Parameters
+//             Danach bei linker folgendes hinzufügen: -lurlmon
+// Ok und compile
+//*************************************************************
+
+
 #include "Bauer.h"
 #include "windows.h"
 #include "sys/stat.h"
